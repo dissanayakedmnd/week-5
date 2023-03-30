@@ -1,0 +1,56 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <random>
+#include <stack>
+#include <algorithm>
+
+using namespace std;
+using namespace std::chrono;
+
+vector<int> iterative_quick_sort(vector<int>& arr) {
+    stack<pair<int, int>> stack;
+    stack.push(make_pair(0, arr.size() - 1));
+    while (!stack.empty()) {
+        int begin = stack.top().first;
+        int end = stack.top().second;
+        stack.pop();
+        if (begin >= end) {
+            continue;
+        }
+        int pivot = arr[end];
+        int i = begin - 1;
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swap(arr[i], arr[j]);
+            }
+        }
+        swap(arr[i + 1], arr[end]);
+        stack.push(make_pair(begin, i));
+        stack.push(make_pair(i + 2, end));
+    }
+    return arr;
+}
+
+void iterative_quick_sort() {
+    int num_elements;
+    cout << "Enter the number of elements: ";
+    cin >> num_elements;
+    vector<int> arr(num_elements);
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(1, 1000);
+    generate(arr.begin(), arr.end(), [&](){ return dis(gen); });
+    auto start_time = high_resolution_clock::now();
+    vector<int> sorted_arr = iterative_quick_sort(arr);
+    auto end_time = high_resolution_clock::now();
+    auto elapsed_time = duration_cast<duration<double>>(end_time - start_time);
+   
+    cout << "\nElapsed Time: " << elapsed_time.count() << " seconds" << endl;
+}
+
+int main() {
+    iterative_quick_sort();
+    return 0;
+}
